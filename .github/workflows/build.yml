@@ -141,7 +141,7 @@ jobs:
           # stays the default download; the MSI is handed to Windows Installer,
           # which is what managed machines need when an endpoint agent refuses
           # to let an NSIS-style self-extracting installer start at all.
-          tauri build --bundles nsis,msi
+          tauri build --bundles nsis msi
 
       - name: Record the installers
         id: installer

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>下载内容</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231A73E8'/%3E%3Cpath d='M12 4v10l4-4 .7.7-4.7 4.7-4.7-4.7.7-.7 4 4V4z' fill='%23fff'/%3E%3Crect x='6' y='18' width='12' height='2' rx='1' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="internal.css">
+<style>
+  .dl-status { flex: 0 0 auto; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+  .dl-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text2); }
+  .dl-status.s-done .dot { background: #34a853; }
+  .dl-status.s-downloading .dot { background: var(--accent); animation: pulse 1.2s ease-in-out infinite; }
+  .dl-status.s-failed .dot { background: var(--danger); }
+  @keyframes pulse { 50% { opacity: 0.35; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M11 3h2v9l3.2-3.2 1.4 1.4L12 15.8 6.4 10.2l1.4-1.4L11 12V3zM5 18h14v2H5v-2z"/></svg>
+    <h1>下载内容</h1>
+    <button id="open-dir" class="btn">打开下载文件夹</button>
+  </div>
+  <div id="list"></div>
+</div>
+<script src="internal.js"></script>
+<script src="downloads.js"></script>
+</body>
+</html>

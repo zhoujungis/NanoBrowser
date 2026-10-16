@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>关于 NanoBrowser</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231A73E8'/%3E%3Ccircle cx='12' cy='12' r='7.2' fill='none' stroke='%23fff' stroke-width='1.4'/%3E%3Cellipse cx='12' cy='12' rx='3.2' ry='7.2' fill='none' stroke='%23fff' stroke-width='1.4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="internal.css">
+</head>
+<body>
+<div class="about">
+  <!-- 与 ntp.html 共用同一份品牌标记，保证界面内图标与应用图标完全一致 -->
+  <img class="about-logo" src="logo.svg" width="108" height="108" alt="NanoBrowser">
+  <h1>NanoBrowser</h1>
+  <div class="ver">版本 0.1.0 · 极致轻量的自制浏览器</div>
+  <p>复用系统 WebView2 运行时，无捆绑内核，低内存占用</p>
+
+  <div class="about-card">
+    <div class="about-row"><span>内核</span><span>Microsoft Edge WebView2 运行时</span></div>
+    <div class="about-row"><span>运行时版本</span><span id="wv-ver">读取中…</span></div>
+    <div class="about-row"><span>Chromium 版本</span><span id="cr-ver">读取中…</span></div>
+    <div class="about-row"><span>框架</span><span>Tauri 2 + Rust</span></div>
+    <div class="about-row"><span>内存目标</span><span>壳 + 双标签 &lt; 200 MB</span></div>
+    <div class="about-row"><span>磁盘占用</span><span>应用本体 &lt; 10 MB</span></div>
+    <div class="about-row"><span>数据存储</span><span>应用目录 data\（profile.json + WebView2 缓存）</span></div>
+    <div class="about-row"><span>下载目录</span><span id="dl-dir">应用目录 Downloads</span></div>
+  </div>
+
+  <div class="about-note">
+    <h3>这需要先装 Edge 吗？不需要</h3>
+    NanoBrowser 不依赖、也从不启动 Edge 浏览器本体（<code>msedge.exe</code>）。它调用的是 Windows 的系统组件
+    <strong>Microsoft Edge WebView2 运行时</strong>——一个可以独立安装、独立卸载、独立更新的运行时，
+    只提供网页渲染能力，不带浏览器外壳。任务管理器里出现的 <code>msedgewebview2.exe</code> 是这个运行时的宿主进程，
+    由本机所有使用 WebView2 的应用共享，并不等同于 Edge 浏览器。
+    <br><br>
+    卸载 Edge 浏览器，只要运行时还在，NanoBrowser 照常可用；反过来卸载运行时，任何 WebView2 应用都会失效。
+    选择这条路的原因很直接：应用本体 &lt; 10 MB、内存 &lt; 200 MB。换成自带内核（CEF / Chromium）需要额外
+    100–300 MB 的磁盘与内存开销，会直接推翻本项目的立项前提。
+  </div>
+</div>
+<script src="internal.js"></script>
+<script>
+  (function () {
+    const ua = navigator.userAgent || "";
+    const edg = /Edg\/([\d.]+)/.exec(ua);
+    const cr = /Chrome\/([\d.]+)/.exec(ua);
+    if (edg) document.getElementById("wv-ver").textContent = "WebView2 " + edg[1];
+    else document.getElementById("wv-ver").textContent = "未识别";
+    document.getElementById("cr-ver").textContent = cr ? "Chromium " + cr[1] : "未识别";
+    window.Nano.boot().then((st) => {
+      const dir = st.downloadsDir || st.defaultDownloadsDir;
+      if (dir) document.getElementById("dl-dir").textContent = dir;
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>设置</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231A73E8'/%3E%3Cpath fill='%23fff' d='M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm9.4 4c0 .5 0 1-.1 1.4l2.1 1.6-2 3.5-2.5-1a7.7 7.7 0 0 1-2.4 1.4l-.4 2.6h-4l-.4-2.6a7.7 7.7 0 0 1-2.4-1.4l-2.5 1-2-3.5 2.1-1.6a8.6 8.6 0 0 1 0-2.8L2.7 8.5l2-3.5 2.5 1a7.7 7.7 0 0 1 2.4-1.4L10 2h4l.4 2.6c.9.3 1.7.8 2.4 1.4l2.5-1 2 3.5-2.1 1.6c.1.4.1.9.1 1.4z' transform='scale(.78) translate(3.5 3.5)'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="internal.css">
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19.4 13a7.7 7.7 0 0 0 .1-1.4l2-1.6-2-3.4-2.4 1a7.7 7.7 0 0 0-2.4-1.4L14.3 2h-4l-.4 2.6a7.7 7.7 0 0 0-2.4 1.4l-2.4-1-2 3.4 2 1.6a7.7 7.7 0 0 0 0 2.8l-2 1.6 2 3.4 2.4-1c.7.6 1.5 1.1 2.4 1.4l.4 2.6h4l.4-2.6c.9-.3 1.7-.8 2.4-1.4l2.4 1 2-3.4-2-1.6zM12 15.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4z"/></svg>
+    <h1>设置</h1>
+  </div>
+
+  <div class="setting-card">
+    <h2>搜索引擎</h2>
+    <div class="setting-row">
+      <div class="sr-main"><div class="sr-title">地址栏与新标签页搜索</div></div>
+      <div class="seg" id="seg-engine">
+        <button data-v="bing">必应</button>
+        <button data-v="baidu">百度</button>
+        <button data-v="google">Google</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="setting-card">
+    <h2>外观</h2>
+    <div class="setting-row">
+      <div class="sr-main"><div class="sr-title">主题</div></div>
+      <div class="seg" id="seg-theme">
+        <button data-v="system">跟随系统</button>
+        <button data-v="light">浅色</button>
+        <button data-v="dark">深色</button>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div class="sr-main">
+        <div class="sr-title">显示书签栏</div>
+        <div class="sr-sub">在工具栏下方常驻显示已收藏的书签</div>
+      </div>
+      <div class="switch" id="sw-bookmarks"></div>
+    </div>
+  </div>
+
+  <div class="setting-card">
+    <h2>启动</h2>
+    <div class="setting-row">
+      <div class="sr-main"><div class="sr-title">启动时</div></div>
+      <div class="seg" id="seg-startup">
+        <button data-v="session">继续上次会话</button>
+        <button data-v="ntp">打开新标签页</button>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div class="sr-main">
+        <div class="sr-title">主页</div>
+        <div class="sr-sub">工具栏主页按钮打开的页面，留空使用新标签页</div>
+      </div>
+      <input id="in-homepage" class="text-input" placeholder="https:// 或 nano://newtab" spellcheck="false">
+    </div>
+  </div>
+
+  <div class="setting-card">
+    <h2>下载</h2>
+    <div class="setting-row">
+      <div class="sr-main">
+        <div class="sr-title">下载保存位置</div>
+        <div class="sr-sub">留空则使用默认目录 <span id="dl-default">…</span></div>
+      </div>
+      <input id="in-downloads" class="text-input path-input" placeholder="例如 D:\Downloads" spellcheck="false">
+      <button id="open-downloads" class="btn">打开</button>
+    </div>
+  </div>
+
+  <div class="setting-card">
+    <h2>隐私</h2>
+    <div class="setting-row">
+      <div class="sr-main">
+        <div class="sr-title">清除浏览记录</div>
+        <div class="sr-sub">删除本地保存的全部历史，不可恢复</div>
+      </div>
+      <button id="clear-history" class="btn danger">清除浏览记录</button>
+    </div>
+  </div>
+</div>
+<script src="internal.js"></script>
+<script src="settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!-- NanoBrowser 品牌标记：几何与 src-tauri/icons/_gen_icon.ps1 生成的 icon.ico / icon.png 完全一致，
+     供 nano://newtab 与 nano://about 等页面的 logo 共用，确保应用图标与界面内图标始终统一。
+     坐标系沿用图标的 256x256 设计稿，实际显示尺寸由页面的 CSS 决定。 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="NanoBrowser">
+  <defs>
+    <linearGradient id="nb-plate" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8ab4f8"/>
+      <stop offset="1" stop-color="#1a73e8"/>
+    </linearGradient>
+    <clipPath id="nb-globe"><circle cx="128" cy="128" r="82"/></clipPath>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="url(#nb-plate)"/>
+  <g clip-path="url(#nb-globe)" fill="none" stroke="#fff" stroke-width="8">
+    <circle cx="128" cy="128" r="82"/>
+    <ellipse cx="128" cy="128" rx="36.9" ry="82"/>
+    <path d="M46 128h164"/>
+    <path d="M210 128A82 41 0 0 1 46 128"/>
+  </g>
+</svg>

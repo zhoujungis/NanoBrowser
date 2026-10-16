@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>书签管理器</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231A73E8'/%3E%3Cpath d='M12 6.5l3 3-.5.5-2-2v9.5h-.9V8l-2 2-.6-.5z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="internal.css">
+<style>
+  .bm-edit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--surface);
+    margin: 2px 0;
+  }
+  .bm-edit > img, .bm-edit > svg { width: 16px; height: 16px; border-radius: 2px; flex: 0 0 16px; }
+  .bm-edit .fields { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .bm-edit input {
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    width: 100%;
+  }
+  .bm-edit input:focus { border-color: var(--accent); }
+  .bm-edit .btns { display: flex; flex-direction: column; gap: 6px; }
+  .bm-edit .btns button {
+    height: 26px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 13px;
+    font-family: var(--font);
+    font-size: 12px;
+    cursor: default;
+  }
+  .bm-edit .btns .ok { background: var(--accent); color: #fff; }
+  .bm-edit .btns .cancel { background: var(--surface2); color: var(--text); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a2 2 0 0 1 2 2v9.2l3.4-2.4a1.9 1.9 0 0 1 2.4.3l.4.4-7.1 6.1a2 2 0 0 1-2.2 0l-7.1-6.1.4-.4a1.9 1.9 0 0 1 2.4-.3L10 15.2V6a2 2 0 0 1 2-2z" transform="rotate(180 12 12) scale(1,-1) translate(0,-24)"/></svg>
+    <h1>书签管理器</h1>
+  </div>
+  <input id="search" class="search-input" placeholder="搜索书签" spellcheck="false" autocomplete="off">
+  <div id="list"></div>
+</div>
+<script src="internal.js"></script>
+<script src="bookmarks.js"></script>
+</body>
+</html>

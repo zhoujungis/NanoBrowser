@@ -1,0 +1,25 @@
+[
+  {
+    "identifier": "tab-local",
+    "description": "Internal pages (nano://) running in tab webviews - full app IPC",
+    "webviews": ["tab-*"],
+    "permissions": ["core:default", "core:event:allow-emit"]
+  },
+  {
+    "identifier": "tab-remote",
+    "description": "External web pages in tab webviews - may only report UI events, no commands",
+    "webviews": ["tab-*"],
+    "local": false,
+    "remote": {
+      "urls": [
+        "https://*",
+        "http://*",
+        "https://*:*",
+        "http://*:*",
+        "https://*/*",
+        "http://*/*"
+      ]
+    },
+    "permissions": ["core:event:allow-emit"]
+  }
+]

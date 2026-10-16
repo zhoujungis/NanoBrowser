@@ -1,0 +1,20 @@
+# ---- build output -------------------------------------------------------
+/src-tauri/target/
+# tauri regenerates these on every build
+/src-tauri/gen/schemas/
+# the staged sidecar copy the bundler consumes
+/src-tauri/binaries/
+
+# ---- runtime data -------------------------------------------------------
+# profiles, caches and cookies the browser writes next to itself; never shared
+/data/
+/Downloads/
+
+# ---- test scratch -------------------------------------------------------
+# both live under target/, but keep the names ignored in case a run is moved
+*_testscratch/
+_agent_e2e/
+
+# ---- os noise -----------------------------------------------------------
+Thumbs.db
+Desktop.ini

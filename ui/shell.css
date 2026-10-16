@@ -1,0 +1,548 @@
+/* NanoBrowser shell - Chrome MD3 styling */
+
+:root {
+  --strip: #dee1e6;
+  --toolbar: #ffffff;
+  --tab-active: #ffffff;
+  --omnibox: #f1f3f4;
+  --omnibox-focus: #ffffff;
+  --border: #dadce0;
+  --text: #202124;
+  --text2: #5f6368;
+  --icon: #444746;
+  --icon-disabled: #9aa0a6;
+  --hover: rgba(0, 0, 0, 0.06);
+  --hover-strong: rgba(0, 0, 0, 0.1);
+  --sep: rgba(0, 0, 0, 0.2);
+  --menu-bg: #ffffff;
+  --menu-hover: #f1f3f4;
+  --menu-shadow: 0 2px 10px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.12);
+  --danger: #c42b1c;
+  --accent: #1a73e8;
+  --bm-text: #3c4043;
+  --font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="dark"] {
+  --strip: #202124;
+  --toolbar: #35363a;
+  --tab-active: #35363a;
+  --omnibox: #292a2d;
+  --omnibox-focus: #35363a;
+  --border: #3c4043;
+  --text: #e8eaed;
+  --text2: #9aa0a6;
+  --icon: #c4c7c5;
+  --icon-disabled: #5f6368;
+  --hover: rgba(255, 255, 255, 0.09);
+  --hover-strong: rgba(255, 255, 255, 0.16);
+  --sep: rgba(255, 255, 255, 0.22);
+  --menu-bg: #292a2d;
+  --menu-hover: #3c4043;
+  --menu-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --bm-text: #e8eaed;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  cursor: default;
+}
+
+#shell { display: flex; flex-direction: column; width: 100%; height: 100%; }
+
+/* While the docked DevTools panel is being resized, the shell is grown over the
+   whole window; this catcher owns the pointer so the drag keeps tracking even
+   after it has left the panel's own grip. */
+#dt-grab {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  cursor: ns-resize;
+  background: transparent;
+}
+#dt-grab.ew { cursor: ew-resize; }
+
+/* ---------------- tab strip ---------------- */
+
+#tabstrip {
+  display: flex;
+  align-items: flex-end;
+  height: 40px;
+  padding: 0 0 0 4px;
+  background: var(--strip);
+  flex: 0 0 40px;
+  overflow: hidden;
+}
+
+#tabs {
+  display: flex;
+  align-items: flex-end;
+  flex: 0 1 auto;
+  height: 40px;
+  min-width: 0;
+  /* 4px padding + new-tab button (36) + window controls (138) */
+  max-width: calc(100% - 178px);
+  overflow: visible;
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  flex: 0 1 auto;
+  width: 240px;
+  min-width: 52px;
+  max-width: 240px;
+  padding: 0 6px 0 10px;
+  border-radius: 10px 10px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text2);
+  transition: background-color 90ms ease;
+  container-type: inline-size;
+}
+
+.tab:hover { background: var(--hover); }
+.tab:hover:not(.active) { color: var(--text); }
+
+.tab.active {
+  background: var(--tab-active);
+  color: var(--text);
+}
+
+.tab.active::before,
+.tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  background: var(--tab-active);
+  pointer-events: none;
+}
+.tab.active::before {
+  left: -10px;
+  -webkit-mask: radial-gradient(circle 10px at 100% 0%, #000 0 10px, transparent 10.2px);
+}
+.tab.active::after {
+  right: -10px;
+  -webkit-mask: radial-gradient(circle 10px at 0% 0%, #000 0 10px, transparent 10.2px);
+}
+
+.tab-sep {
+  flex: 0 0 1px;
+  width: 1px;
+  height: 20px;
+  margin-bottom: 7px;
+  align-self: flex-end;
+  background: var(--sep);
+  pointer-events: none;
+}
+
+/* tab being reordered: follows the cursor, lifted above its siblings */
+.tab.dragging {
+  z-index: 5;
+  transition: none;
+  pointer-events: none;
+  background: var(--tab-active);
+  color: var(--text);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+}
+body.tab-dragging { cursor: grabbing; user-select: none; }
+
+.tab-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  border-radius: 2px;
+  object-fit: cover;
+}
+
+.tab-icon.nano { background: transparent; }
+
+.tab-icon img { width: 16px; height: 16px; border-radius: 2px; }
+.tab-icon svg { width: 16px; height: 16px; color: var(--text2); }
+
+.tab-title {
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 34px;
+}
+
+.tab.pinned { flex: 0 0 42px; min-width: 42px; max-width: 42px; padding: 0 0 0 13px; justify-content: center; }
+.tab.pinned .tab-title { display: none; }
+.tab.pinned .tab-close { display: none !important; }
+
+.tab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin: 0 2px 0 0;
+  border-radius: 50%;
+  flex: 0 0 20px;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  opacity: 0;
+  cursor: default;
+}
+.tab-close svg { width: 14px; height: 14px; }
+.tab:hover .tab-close { opacity: 1; }
+.tab-close:hover { background: var(--hover-strong); }
+.tab.active .tab-close { opacity: 1; }
+
+/* In a squeezed tab the close button would take up the whole title area, so it
+   is dropped (the tab stays closable via the context menu / Ctrl+W). Declared
+   after the rules above on purpose: same specificity, source order decides. */
+@container (width < 62px) {
+  .tab-close { display: none; }
+}
+
+/* spinner while loading */
+.spinner {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: var(--accent);
+  animation: spin 700ms linear infinite;
+}
+[data-theme="dark"] .spinner { border-color: rgba(255, 255, 255, 0.2); border-top-color: #8ab4f8; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+#newtab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin: 0 2px 4px 4px;
+  flex: 0 0 30px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text2);
+}
+#newtab svg { width: 17px; height: 17px; }
+#newtab:hover { background: var(--hover); color: var(--text); }
+
+#strip-spacer { flex: 1 1 auto; height: 40px; }
+
+/* ---------------- window controls ---------------- */
+
+/* the window controls must never be squeezed by a crowded tab strip */
+#winctl { display: flex; align-self: flex-start; flex: 0 0 auto; }
+
+#winctl button {
+  width: 46px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+}
+#winctl svg.cap { width: 10px; height: 10px; }
+#winctl button:hover { background: var(--hover); color: var(--text); }
+#win-close:hover { background: var(--danger) !important; color: #ffffff !important; }
+
+/* ---------------- toolbar ---------------- */
+
+#toolbar {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  flex: 0 0 44px;
+  padding: 0 4px;
+  gap: 2px;
+  background: var(--toolbar);
+  border-bottom: 1px solid var(--border);
+}
+
+.tbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--icon);
+}
+.tbtn svg { width: 18px; height: 18px; }
+.tbtn:hover { background: var(--hover); }
+.tbtn:active { background: var(--hover-strong); }
+.tbtn:disabled { color: var(--icon-disabled); }
+.tbtn:disabled:hover { background: transparent; }
+
+/* ---------------- omnibox ---------------- */
+
+#omnibox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  height: 30px;
+  margin: 0 6px;
+  padding: 0 2px 0 10px;
+  border-radius: 15px;
+  background: var(--omnibox);
+  transition: box-shadow 120ms ease, background-color 120ms ease;
+}
+
+#omnibox.focused {
+  background: var(--omnibox-focus);
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+  border: 1px solid var(--border);
+  padding: 0 1px 0 9px;
+}
+
+#omni-sec { display: flex; align-items: center; flex: 0 0 auto; color: var(--text2); }
+#omni-sec svg { width: 15px; height: 15px; }
+
+#omni-input {
+  flex: 1 1 auto;
+  height: 100%;
+  min-width: 40px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 13.5px;
+  color: var(--text);
+  padding: 0 6px;
+  cursor: text;
+}
+#omni-input::selection { background: rgba(26, 115, 232, 0.28); }
+
+#omni-star {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 2px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text2);
+  flex: 0 0 28px;
+}
+#omni-star svg { width: 16px; height: 16px; }
+#omni-star:hover { background: var(--hover); color: var(--text); }
+#omni-star.starred { color: #f9ab00; }
+
+/* suggestion dropdown */
+#omni-drop {
+  display: none;
+  position: absolute;
+  top: 34px;
+  left: 0;
+  right: 0;
+  max-height: 420px;
+  overflow-y: auto;
+  background: var(--menu-bg);
+  border-radius: 12px;
+  box-shadow: var(--menu-shadow);
+  padding: 4px 0;
+  z-index: 60;
+}
+#omnibox.open #omni-drop { display: block; }
+
+.sug {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 42px;
+  padding: 0 20px 0 16px;
+  font-size: 13.5px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.sug svg { width: 16px; height: 16px; flex: 0 0 16px; color: var(--text2); }
+.sug img { width: 16px; height: 16px; flex: 0 0 16px; border-radius: 2px; }
+.sug .sug-text { overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; }
+.sug .sug-url { color: var(--text2); font-size: 12.5px; margin-left: 4px; overflow: hidden; text-overflow: ellipsis; flex: 1 1 auto; min-width: 40px; }
+.sug.selected { background: var(--menu-hover); }
+.sug .sug-kind { margin-left: auto; color: var(--text2); font-size: 12px; display: flex; align-items: center; gap: 6px; }
+
+/* ---------------- bookmarks bar ---------------- */
+
+#bookmarkbar {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  flex: 0 0 28px;
+  padding: 0 6px;
+  gap: 1px;
+  background: var(--toolbar);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+#bookmarkbar[hidden] { display: none; }
+
+.bm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--bm-text);
+  flex: 0 0 auto;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.bm > img, .bm > svg { width: 14px; height: 14px; border-radius: 2px; flex: 0 0 14px; }
+.bm span { overflow: hidden; text-overflow: ellipsis; }
+.bm:hover { background: var(--hover); }
+
+#bm-overflow-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 24px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text2);
+  flex: 0 0 26px;
+}
+#bm-overflow-btn svg { width: 15px; height: 15px; }
+#bm-overflow-btn:hover { background: var(--hover); }
+
+/* ---------------- find bar ---------------- */
+
+/* stays inside the chrome strip (the shell webview is only as tall as the
+   chrome), so it must clear the download / menu buttons on the right */
+#findbar {
+  position: absolute;
+  top: 46px;
+  right: 74px;
+  max-width: calc(100% - 86px);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+  padding: 0 2px 0 12px;
+  border-radius: 16px;
+  background: var(--menu-bg);
+  box-shadow: var(--menu-shadow);
+  z-index: 80;
+}
+#findbar[hidden] { display: none; }
+
+#find-input {
+  flex: 1 1 140px;
+  min-width: 40px;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text);
+  cursor: text;
+}
+
+#find-count { font-size: 12px; color: var(--text2); min-width: 44px; text-align: center; }
+#findbar .tbtn { width: 26px; height: 26px; flex-basis: 26px; }
+#findbar .tbtn svg { width: 15px; height: 15px; }
+
+/* ---------------- menus ---------------- */
+
+#menu-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+.menu {
+  position: absolute;
+  min-width: 300px;
+  background: var(--menu-bg);
+  border-radius: 12px;
+  box-shadow: var(--menu-shadow);
+  padding: 6px 0;
+  font-size: 13.5px;
+  color: var(--text);
+  animation: menu-in 100ms ease;
+}
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 34px;
+  padding: 0 18px 0 16px;
+  cursor: default;
+}
+.menu-row:hover { background: var(--menu-hover); }
+.menu-row svg { width: 17px; height: 17px; color: var(--text2); flex: 0 0 17px; }
+.menu-row .mr-label { flex: 1 1 auto; }
+.menu-row .mr-hint { color: var(--text2); font-size: 12px; }
+.menu-row.mr-sub { padding-left: 30px; }
+
+.menu-divider { height: 1px; margin: 7px 0; background: var(--border); }
+
+.menu-zoom {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 10px;
+  justify-content: space-between;
+}
+.menu-zoom .tbtn { width: 30px; height: 30px; flex-basis: 30px; }
+.menu-zoom .mz-val { flex: 1; text-align: center; font-size: 13px; color: var(--text2); }
+
+.menu-bm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 34px;
+  padding: 0 18px 0 16px;
+  max-width: 320px;
+}
+.menu-bm > img, .menu-bm > svg { width: 16px; height: 16px; border-radius: 2px; flex: 0 0 16px; }
+.menu-bm span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.menu-bm:hover { background: var(--menu-hover); }
+.menu-bm .bm-x { margin-left: auto; opacity: 0; color: var(--text2); }
+.menu-bm:hover .bm-x { opacity: 1; }
+
+/* scrollbars (Chrome style) */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.24); border-radius: 5px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.36); }
+::-webkit-scrollbar-track { background: transparent; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.26); }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.4); }

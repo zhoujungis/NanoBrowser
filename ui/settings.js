@@ -68,6 +68,24 @@
     });
   }
 
+  function initDefaultBrowser() {
+    const btn = document.getElementById("register-default");
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      try {
+        await invoke("register_default_browser");
+        btn.textContent = "已注册";
+        await invoke("open_default_apps_settings");
+      } catch (e) {
+        btn.textContent = "注册失败";
+      }
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = "注册并打开设置";
+      }, 2500);
+    });
+  }
+
   function initClear() {
     const btn = document.getElementById("clear-history");
     btn.addEventListener("click", async () => {
@@ -89,6 +107,7 @@
   initSwitch("sw-bookmarks", "bookmarksBar");
   initHomepage();
   initDownloadsDir();
+  initDefaultBrowser();
   initClear();
   document.getElementById("open-downloads").addEventListener("click", () => invoke("open_downloads_folder"));
 

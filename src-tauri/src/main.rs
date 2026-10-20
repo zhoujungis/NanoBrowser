@@ -6,6 +6,7 @@ mod inject;
 mod profile;
 mod state;
 mod tabs;
+mod windows_integration;
 
 use std::sync::{Arc, Mutex};
 
@@ -91,10 +92,40 @@ mod tests {
 
 fn main() {
   tauri::Builder::default()
+    // The plugin must be registered first: when this process is a second
+    // launch, it forwards argv to the running instance and exits before any
+    // window or webview is created here.
+    .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
+      // This callback runs on the main thread (inside a WM_COPYDATA handler).
+      // `add_child` dispatches to the main thread and waits, so creating tabs
+      // here would deadlock. Hand the work to the async runtime, which is also
+      // how page shortcuts create/close tabs. If setup is still running the
+      // targets are queued and drained at the end of setup instead.
+      let Some(targets) = windows_integration::accept_launch_targets(
+        windows_integration::launch_targets(argv),
+      ) else {
+        return;
+      };
+      let app = app.clone();
+      tauri::async_runtime::spawn(async move {
+        windows_integration::focus_main_window(&app);
+        for (i, target) in targets.iter().enumerate() {
+          create_tab(&app, Some(target.clone()), i > 0);
+        }
+      });
+    }))
     .setup(|app| {
       // persist dir sanity (dev: D:\NanoBrowser\data)
       let prof = profile::load_profile();
       let saved_window = prof.window.clone();
+
+      // Make this copy visible to Settings -> Apps -> Default apps. HKCU only
+      // and idempotent: a portable install that moves repairs its paths here.
+      if let Err(e) = windows_integration::register_default_browser() {
+        if cfg!(debug_assertions) {
+          eprintln!("default-browser registration failed: {e}");
+        }
+      }
 
       // main window (frameless, initially hidden to avoid flash)
       let win = tauri::WindowBuilder::new(app, "main")
@@ -142,9 +173,15 @@ fn main() {
         LogicalSize::new(w, shell_h),
       )?;
 
-      // restore session or open a fresh new-tab page
+      // Restore the previous session (unless startup asks for a fresh NTP),
+      // then open whatever Windows launched us with. A URL or HTML file from a
+      // default-browser click must win over the new-tab page.
       let handle = app.handle().clone();
-      if startup == "session" && !session.tabs.is_empty() {
+      let launch = windows_integration::launch_targets(
+        std::env::args_os().skip(1).map(|a| a.to_string_lossy().into_owned()),
+      );
+      let restored = startup == "session" && !session.tabs.is_empty();
+      if restored {
         {
           let mut s = app.state::<Mutex<AppState>>().inner().lock().unwrap();
           for url in &session.tabs {
@@ -180,7 +217,12 @@ fn main() {
         let idx = session.active.min(s_len(app.handle()));
         let id = app.state::<Mutex<AppState>>().lock().unwrap().tabs[idx].id;
         activate_tab(&handle, id);
-      } else {
+      }
+      if !launch.is_empty() {
+        for (i, target) in launch.iter().enumerate() {
+          create_tab(&handle, Some(target.clone()), i > 0);
+        }
+      } else if !restored {
         create_tab(&handle, None, false);
       }
 
@@ -270,6 +312,12 @@ fn main() {
         }
       });
 
+      // A second launch that arrived while setup was still running was queued
+      // (see accept_launch_targets); open it before the window is shown.
+      for (i, target) in windows_integration::mark_ready_and_take_pending().iter().enumerate() {
+        create_tab(&handle, Some(target.clone()), i > 0);
+      }
+
       win.show()?;
       // the window's non-client offsets are only final now, so the saved inner
       // size is asserted a second time (see restore_geometry)
@@ -346,6 +394,8 @@ fn main() {
       commands::clear_history,
       commands::set_settings,
       commands::sys_theme_changed,
+      commands::register_default_browser,
+      commands::open_default_apps_settings,
       commands::open_downloads_folder,
       commands::internal_nav,
       commands::toggle_devtools,

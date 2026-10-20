@@ -477,6 +477,18 @@ pub async fn chrome_overlay(app: AppHandle<Wry>, active: bool) {
   tabs::set_overlay(&app, active);
 }
 
+/// Register this copy under HKCU so Windows' Default Apps page lists it.
+#[tauri::command]
+pub async fn register_default_browser() -> Result<(), String> {
+  crate::windows_integration::register_default_browser()
+}
+
+/// Open Settings -> Apps -> Default apps, where the user picks the handler.
+#[tauri::command]
+pub async fn open_default_apps_settings() -> Result<(), String> {
+  crate::windows_integration::open_default_apps_settings()
+}
+
 /// Reveal the download directory in Explorer, creating it if it does not exist.
 #[tauri::command]
 pub async fn open_downloads_folder(app: AppHandle<Wry>) {

@@ -777,3 +777,11 @@ counter-intuitive and worth reading before changing the corresponding area.
 ## 16. License
 
 Not specified in this repository. Add a `LICENSE` file before distributing.
+
+<!-- blog-backlink -->
+---
+
+## 相关阅读
+
+- 博客：[尘世栈帧 — 技术、编程、AI 与科学](https://blog.zhoujun.dev/)
+- 项目详解：[NanoBrowser 拆解：手写进程内 CDP](https://blog.zhoujun.dev/article/nanobrowser-tauri-webview2/)

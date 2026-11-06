@@ -1,6 +1,6 @@
 [package]
 name = "nanobrowser"
-version = "0.0.3"
+version = "0.0.4"
 description = "NanoBrowser - an ultra-light Chrome-style browser"
 edition = "2021"
 # the browser is the product; nanoagent rides along as a bundled sidecar
